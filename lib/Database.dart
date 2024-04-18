@@ -59,15 +59,29 @@ class DBProvider {
     }else{
       print("Not exist");
 
-      try {
-        await Directory(dirname(path)).create(recursive: true);
-      } catch (e) {
-        ByteData data = await rootBundle.load(join("assets", "internal.db"));
-        List<int> bytes = data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes);
+      Directory documentsDirectory = await getApplicationDocumentsDirectory();
+      String path = join(documentsDirectory.path, "internal.db");
+      print("init start");
+      return await openDatabase(path, version: 1, onOpen: (db) {},
+          onCreate: (Database db, int version) async {
+        await db.execute("CREATE TABLE Events ("
+            "title TEXT,"
+            "year INTEGER,"
+            "month INTEGER,"
+            "day INTEGER,"
+            "complite INTEGER"
+            ")");
+      });
 
-        await File(path).writeAsBytes(bytes, flush: true);
-        print("copied!");
-      }
+      // try {
+      //   await Directory(dirname(path)).create(recursive: true);
+      // } catch (e) {
+      //   ByteData data = await rootBundle.load(join("assets", "internal.db"));
+      //   List<int> bytes = data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes);
+
+      //   await File(path).writeAsBytes(bytes, flush: true);
+      //   print("copied!");
+      // }
     }
     Database db = await openDatabase(path);
     print(db.isOpen.toString());
