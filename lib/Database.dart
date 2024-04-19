@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:flutter/services.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class Event
@@ -70,9 +69,11 @@ class DBProvider {
             "month INTEGER,"
             "day INTEGER,"
             "complite INTEGER"
-            ")");
+            ");");
+        await db.execute("CREATE TABLE Texts ("
+            ""
+            ");");
       });
-
       // try {
       //   await Directory(dirname(path)).create(recursive: true);
       // } catch (e) {
@@ -99,6 +100,11 @@ class DBProvider {
       "0);"
     );
   }
+
+  Future<void> deleteTask(DateTime dt, String title) async {
+    final db = await initDB();
+    db.execute("DELETE FROM Events WHERE day=${dt.day} AND month=${dt.month} AND year=${dt.year} AND title=\"$title\";");
+  }
   
   Future<List<Map<String, Object?>>> getEvents(DateTime dt) async {
     final db = await initDB();
@@ -109,5 +115,11 @@ class DBProvider {
   Future<void> setState(DateTime dt, String title, int currentState) async {
     final db = await initDB();
     db.execute("UPDATE Events SET complite=$currentState WHERE day=${dt.day} AND month=${dt.month} AND year=${dt.year} AND title=\"$title\";");
+  }
+
+  Future<List<Map<String, String>>> getAllTexts() async {
+    List<Map<String, String>> output = [];
+
+    return output;
   }
 }
